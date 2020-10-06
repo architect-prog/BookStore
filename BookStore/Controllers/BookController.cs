@@ -32,9 +32,20 @@ namespace BookStore.Controllers
             return View(_bookRepository.GetBookById(id));
         }
 
+        public IActionResult CreateBook()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateBook(Book book)
+        {
+            return View();
+        }
+
         public List<Book> SearchBooks(string bookName, string authorName)
         {
             return _bookRepository.SearchBook(bookName, authorName);
-        }
+        }      
     }
 }

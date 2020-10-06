@@ -4,7 +4,19 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewData["Title"] | Application</title>
-    <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+
+    <environment include="Development">
+        <link href="~/lib/twitter-bootstrap/css/bootstrap.css" rel="stylesheet" />
+    </environment>
+    <environment exclude="Production">       
+        <link rel="stylesheet" 
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" 
+              asp-fallback-href="~/lib/twitter-bootstrap/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only"
+              asp-fallback-test-property="position"
+              asp-fallback-test-value="absolute"
+              integrity="" crossorigin="anonymous">
+    </environment>
     <link href="~/css/Site.css" rel="stylesheet" />
 </head>
 <body>
@@ -12,7 +24,7 @@
         <nav class="navbar navbar-expand navbar-dark flex-column flex-md-row bd-navbar">
             <div class="container">
                 <a class="navbar-brand mr-0 mr-md-2" href="/">
-                    <img src="~/Images/logo.jpg" asp-append-version="true" width="30" height="30" >
+                    <img src="~/Images/logo.jpg" asp-append-version="true" width="30" height="30">
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +50,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-controller="Book" asp-action="GetAllBooks">All books</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Book" asp-action="CreateBook">Create book</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -51,9 +66,18 @@
             Copyright &copy; Book Store @DateTime.Now.Year
         </div>
     </footer>
-    <script src="~/lib/jquery/jquery.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/jquery.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/jquery.min.js"></script>
+    </environment>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+            integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
     @RenderSection("scripts", required: false)
 </body>
 </html>
