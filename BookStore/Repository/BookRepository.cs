@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookStore.DataContexts;
 using BookStore.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Repository
 {
@@ -16,7 +17,7 @@ namespace BookStore.Repository
             _context = context;
         }
 
-        public int AddNewBook(Book book)
+        public async Task<int> AddNewBook(Book book)
         {
             Books newBook = new Books()
             {
@@ -30,17 +31,49 @@ namespace BookStore.Repository
                 UpdatedOn = DateTime.UtcNow
             };
 
-            _context.Books.Add(newBook);
-            _context.SaveChanges();
+            await _context.Books.AddAsync(newBook);
+            await _context.SaveChangesAsync();
             return newBook.Id;            
         }
-        public List<Book> GetAllBooks()
+        public async Task<IEnumerable<Book>> GetAllBooks()
         {
-            return DataSource();
+            var books = await _context.Books.ToListAsync();
+            List<Book> result = new List<Book>(); 
+
+            if (books?.Any() != null)
+            {
+                foreach (var book in books)
+                {
+                    result.Add(new Book()
+                    {
+                        Author = book.Author,
+                        Category = book.Category,
+                        Description = book.Description,
+                        Language = book.Language,
+                        Title = book.Title,
+                        TotalPages = book.TotalPages                       
+                    });
+                }
+            }
+            return result;
         }
-        public Book GetBookById(int id)
+        public async Task<Book> GetBookById(int id)
         {
-            return DataSource().Where(x => id == x.Id).FirstOrDefault();
+            var book = await _context.Books.FindAsync(id);
+            if (book != null)
+            {
+                Book result = new Book()
+                {
+                    Author = book.Author,
+                    Category = book.Category,
+                    Description = book.Description,
+                    Language = book.Language,
+                    Title = book.Title,
+                    TotalPages = book.TotalPages
+                };
+                return result;
+            }           
+            return null;
         }
         public List<Book> SearchBook(string title, string author)
         {
@@ -51,11 +84,9 @@ namespace BookStore.Repository
             return new List<Book>()
             {                
                 new Book(){Id =1, Title="MVC", Author = "Nitish", Description="This is the description for MVC book", Category="Programming", Language="English", TotalPages=134 },
-                new Book(){Id =2, Title="Dot Net Core", Author = "Nitish", Description="This is the description for Dot Net Core book", Category="Framework", Language="Chinese", TotalPages=567 },
                 new Book(){Id =3, Title="C#", Author = "Monika", Description="This is the description for C# book", Category="Developer", Language="Hindi", TotalPages=897 },
-                new Book(){Id =4, Title="Java", Author = "Webgentle", Description="This is the description for Java book", Category="Concept", Language="English", TotalPages=564 },
                 new Book(){Id =5, Title="Php", Author = "Webgentle", Description="This is the description for Php book", Category="Programming", Language="English", TotalPages=100 },
-                new Book(){Id =6, Title="Azure DevOps", Author = "Nitish", Description="This is the description for Azure Devops book", Category="DevOps", Language="English", TotalPages=800 },
+                new Book(){Id =6, Title="", Author = "", Description="This is the description for Azure Devops book", Category="DevOps", Language="English", TotalPages=800 },
             };
         }
 
