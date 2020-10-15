@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BookStore.Models
+namespace BookStore.DataContexts
 {
-    public class Book
+    public class Books
     {
         public int Id { get; set; }
         public string Title { get; set; }
@@ -14,5 +14,7 @@ namespace BookStore.Models
         public string Category { get; set; }
         public string Language { get; set; }
         public int TotalPages { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public DateTime? UpdatedOn { get; set; }
     }
 }

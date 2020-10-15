@@ -10,14 +10,10 @@ namespace BookStore.Controllers
 {
     public class BookController : Controller
     {
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
         private readonly BookRepository _bookRepository;
-        public BookController()
+        public BookController(BookRepository bookRepository)
         {
-            _bookRepository = new BookRepository();
+            _bookRepository = bookRepository;
         }
 
         public IActionResult GetAllBooks()
@@ -28,18 +24,25 @@ namespace BookStore.Controllers
 
         [Route("Book-Details")]
         public IActionResult GetBook(int id)
-        {            
+        {             
             return View(_bookRepository.GetBookById(id));
         }
 
-        public IActionResult CreateBook()
+        public IActionResult CreateBook(bool isSuccess = false, int newBookId = 0)
         {
+            ViewBag.IsSuccess = isSuccess;
+            ViewBag.Id = newBookId;
             return View();
         }
 
         [HttpPost]
         public IActionResult CreateBook(Book book)
         {
+            int id = _bookRepository.AddNewBook(book);            
+            if (id > 0)
+            {
+                return RedirectToAction(nameof(CreateBook), new { isSuccess = true, newBookId = id });
+            }
             return View();
         }
 

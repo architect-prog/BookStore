@@ -5,35 +5,41 @@
 
 <div class="container">
     <h3 class="display-4">Create book</h3>
+    <hr />
+    @if (ViewBag.IsSuccess)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> The book was successfully created!<br />
+            Click <a asp-controller="Book" asp-action="GetBook" asp-route-id="@ViewBag.Id">here</a> to view the details.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    }
+
+
+
     <form method="post" asp-controller="Book" asp-action="CreateBook">
         <div class="form-group">
             <label asp-for="Title"></label>
-            <input asp-for="Title" class="form-control"/>
+            <input asp-for="Title" class="form-control" />
         </div>
 
         <div class="form-group">
             <label asp-for="Author"></label>
-            <input asp-for="Author" class="form-control"/>
+            <input asp-for="Author" class="form-control" />
         </div>
         <div class="form-group">
-            <label asp-for="Description"></label>           
+            <label asp-for="Description"></label>
             <textarea asp-for="Description" class="form-control"></textarea>
         </div>
         <div class="form-group">
-            <label asp-for="Category"></label>
-            <input asp-for="Category"  class="form-control"/>
-        </div>
-        <div class="form-group">
-            <label asp-for="Language"></label>
-            <input asp-for="Language"  class="form-control"/>
-        </div>
-        <div class="form-group">
             <label asp-for="TotalPages"></label>
-            <input asp-for="TotalPages"  class="form-control"/>
+            <input asp-for="TotalPages" class="form-control" />
         </div>
         <div class="form-group">
-            <input type="submit" value="Create" class="btn btn-primary"/>
+            <input type="submit" value="Create" class="btn btn-primary" />
         </div>
-</form>
+    </form>
 </div>
 
