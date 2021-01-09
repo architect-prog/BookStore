@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using BookStore.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,9 @@ namespace BookStore.DataContexts
 {
     public class BookStoreContext: DbContext
     {
-        public DbSet<Books> Books { get; set; }
+        public DbSet<Book> Books { get; set; }
+        public DbSet<Language> Languages { get; set; }
+
         public BookStoreContext(DbContextOptions<BookStoreContext> options)
             : base(options)
         {
