@@ -39,5 +39,8 @@ namespace BookStore.ViewModels
 
         public IFormFileCollection Gallery { get; set; }
         public List<Gallery> GalleryFiles { get; set; }
+
+        public IFormFile Preview { get; set; }
+        public string PreviewUrl { get; set; }
     }
 }

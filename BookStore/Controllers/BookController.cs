@@ -69,6 +69,7 @@ namespace BookStore.Controllers
                 Title = book.Title,
                 TotalPages = book.TotalPages,
                 ImageUrl = book.ImageUrl,
+                PreviewUrl = book.PreviewUrl,
                 GalleryFiles = book.BookGalery.ToList()
             };
 
@@ -94,15 +95,21 @@ namespace BookStore.Controllers
                 book.ImageUrl = imagePath;
 
                 book.GalleryFiles = new List<Gallery>();
-                foreach (var image in book.Gallery)
+                if (book.Gallery != null)
                 {
-                    Gallery gallery = new Gallery()
+                    foreach (var image in book.Gallery)
                     {
-                        Name = image.FileName,
-                        ImageUrl = await SaveImage(image, "bookImages/gallery/")
-                    };
-                    book.GalleryFiles.Add(gallery);
-                }
+                        Gallery gallery = new Gallery()
+                        {
+                            Name = image.FileName,
+                            ImageUrl = await SaveImage(image, "bookImages/gallery/")
+                        };
+                        book.GalleryFiles.Add(gallery);
+                    }
+                }              
+
+                string previewPath = await SaveImage(book.Preview, "bookPreviews/");
+                book.PreviewUrl = previewPath;
 
                 Book newBook = new Book()
                 {
@@ -114,6 +121,7 @@ namespace BookStore.Controllers
                     TotalPages = book.TotalPages ?? 0,
                     ImageUrl = book.ImageUrl,
                     BookGalery = book.GalleryFiles,
+                    PreviewUrl = book.PreviewUrl,
                     CreatedOn = DateTime.UtcNow,
                     UpdatedOn = DateTime.UtcNow
                 };

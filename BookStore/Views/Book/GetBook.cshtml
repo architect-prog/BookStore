@@ -21,7 +21,7 @@
                         <div class="carousel-item @(i == 0 ? "active" : "")">
                             <img src="@Model.GalleryFiles[i].ImageUrl" asp-append-version="true" class="d-block w-100 h-100" alt="@Model.GalleryFiles[i].Name">
                         </div>
-                    }                   
+                    }
                 </div>
                 <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -57,9 +57,9 @@
 
             <div class="row">
                 <div class="col-md-4">
-                    <button class="btn btn-outline-primary">
+                    <a class="btn btn-outline-primary" data-toggle="modal" data-target="#modalWindow">
                         Read now
-                    </button>
+                    </a>
                 </div>
             </div>
             <hr />
@@ -97,3 +97,16 @@
     </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modalWindow" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">           
+            <div class="modal-body" style="height:400px;">
+                <embed class="w-100 h-100" src="@Model.PreviewUrl"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

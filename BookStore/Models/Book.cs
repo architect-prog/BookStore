@@ -17,6 +17,7 @@ namespace BookStore.Models
         public int TotalPages { get; set; }
         public string ImageUrl { get; set; }
         public virtual ICollection<Gallery> BookGalery { get; set; }
+        public string PreviewUrl { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
     }
