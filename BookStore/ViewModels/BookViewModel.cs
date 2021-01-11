@@ -1,5 +1,6 @@
 ﻿using BookStore.Models;
 using BookStore.ValidationAttributes;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,5 +31,11 @@ namespace BookStore.ViewModels
         [Display(Name = "Total book pages")]
         [Required(ErrorMessage = "Enter the total pages number")] 
         public int? TotalPages { get; set; }
+
+        [Display(Name = "Main photo")]
+        [Required(ErrorMessage = "The main photo is required")]
+        public IFormFile Photo { get; set; }
+
+        public string ImageUrl { get; set; }
     }
 }

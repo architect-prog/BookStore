@@ -23,7 +23,12 @@ namespace BookStore
             services.AddControllersWithViews();
 #if DEBUG
             services.AddRazorPages().AddRazorRuntimeCompilation();
+            //services.AddRazorPages().AddRazorRuntimeCompilation().AddViewOptions(options =>
+            //{
+            //    options.HtmlHelperOptions.ClientValidationEnabled = false;
+            //});
 #endif
+            
             services.AddScoped<BookRepository>();
             services.AddScoped<LanguageRepository>();
         }

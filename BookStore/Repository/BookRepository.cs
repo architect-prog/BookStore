@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BookStore.Repository
 {
-    public class BookRepository : BaseRepository<BookViewModel>
+    public class BookRepository : BaseRepository<Book>
     {
         private readonly BookStoreContext _context;
 
@@ -18,66 +18,26 @@ namespace BookStore.Repository
             _context = context;
         }
 
-        public async Task<int> Add(BookViewModel item)
-        {
-            Book newBook = new Book()
-            {
-                Author = item.Author,
-                Category = item.Category,
-                Description = item.Description,
-                LanguageId = item.LanguageId,
-                Title = item.Title,
-                TotalPages = item.TotalPages ?? 0,
-                CreatedOn = DateTime.UtcNow,
-                UpdatedOn = DateTime.UtcNow
-            };
-
-            await _context.Books.AddAsync(newBook);
+        public async Task<int> Add(Book item)
+        {          
+            await _context.Books.AddAsync(item);
             await _context.SaveChangesAsync();
-            return newBook.Id;
+
+            return item.Id;
         }   
 
-        public async Task<IEnumerable<BookViewModel>> GetAll()
+        public async Task<IEnumerable<Book>> GetAll()
         {
-            var books = await _context.Books.ToListAsync();
-            List<BookViewModel> result = new List<BookViewModel>();
-            if (books?.Any() != null)
-            {
-                foreach (var book in books)
-                {
-                    result.Add(new BookViewModel()
-                    {
-                        Id = book.Id,
-                        Author = book.Author,
-                        Category = book.Category,
-                        Description = book.Description,
-                        Language = book.Language,
-                        LanguageId = book.LanguageId,
-                        Title = book.Title,
-                        TotalPages = book.TotalPages
-                    });
-                }
-            }
-            return result;
+            List<Book> books = await _context.Books.ToListAsync(); 
+            
+            return books;
         }
 
-        public async Task<BookViewModel> GetById(int id)
+        public async Task<Book> GetById(int id)
         {
-            var book = await _context.Books.FindAsync(id);
-            if (book != null)
-            {
-                BookViewModel result = new BookViewModel()
-                {
-                    Author = book.Author,
-                    Category = book.Category,
-                    Description = book.Description,
-                    Language = book.Language,
-                    Title = book.Title,
-                    TotalPages = book.TotalPages
-                };
-                return result;
-            }
-            return null;
+            Book book = await _context.Books.FindAsync(id);
+          
+            return book;
         }
 
         public List<Book> SearchBook(string title, string author)

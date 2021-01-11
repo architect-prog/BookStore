@@ -7,6 +7,8 @@ using BookStore.ViewModels;
 using BookStore.Repository;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using BookStore.Models;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace BookStore.Controllers
 {
@@ -14,23 +16,60 @@ namespace BookStore.Controllers
     {
         private readonly BookRepository _bookRepository;
         private readonly LanguageRepository _languageRepository;
-        public BookController(BookRepository bookRepository, LanguageRepository languageRepository)
+        private readonly IWebHostEnvironment _environment;
+        public BookController(BookRepository bookRepository, 
+            LanguageRepository languageRepository, IWebHostEnvironment env)
         {
             _bookRepository = bookRepository;
             _languageRepository = languageRepository;
+            _environment = env;
         }
 
         public async Task<IActionResult> GetAllBooks()
         {
-            var books = await _bookRepository.GetAll();            
-            return View(books);
+            var books = await _bookRepository.GetAll();
+
+            List<BookViewModel> result = new List<BookViewModel>();
+            if (books?.Any() != null)
+            {
+                foreach (var book in books)
+                {
+                    result.Add(new BookViewModel()
+                    {
+                        Id = book.Id,
+                        Author = book.Author,
+                        Category = book.Category,
+                        Description = book.Description,
+                        Language = book.Language,
+                        LanguageId = book.LanguageId,
+                        Title = book.Title,
+                        TotalPages = book.TotalPages,
+                        ImageUrl = book.ImageUrl
+                    });
+                }
+            }
+
+            return View(result);
         }
 
         [Route("Book-Details")]
         public async Task<IActionResult> GetBook(int id)
         {
-            BookViewModel book = await _bookRepository.GetById(id);
-            return View(book);
+            Book book = await _bookRepository.GetById(id);
+            BookViewModel result = new BookViewModel()
+            {
+                Id = book.Id,
+                Author = book.Author,
+                Category = book.Category,
+                Description = book.Description,
+                Language = book.Language,
+                LanguageId = book.LanguageId,
+                Title = book.Title,
+                TotalPages = book.TotalPages,
+                ImageUrl = book.ImageUrl
+            };
+
+            return View(result);
         }
 
         public async Task<IActionResult> CreateBook(bool isSuccess = false, int newBookId = 0)
@@ -48,13 +87,31 @@ namespace BookStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                int id = await _bookRepository.Add(book);
+                string imagePath = "images/" + Guid.NewGuid().ToString() + "_" + book.Photo.FileName;
+                string savingPath = Path.Combine(_environment.WebRootPath, imagePath);
+                imagePath = "/" + imagePath;
+                
+                Book newBook = new Book()
+                {
+                    Author = book.Author,
+                    Category = book.Category,
+                    Description = book.Description,
+                    LanguageId = book.LanguageId,
+                    Title = book.Title,
+                    TotalPages = book.TotalPages ?? 0,
+                    ImageUrl = imagePath,
+                    CreatedOn = DateTime.UtcNow,
+                    UpdatedOn = DateTime.UtcNow
+                };
+
+                int id = await _bookRepository.Add(newBook);
+                await book.Photo.CopyToAsync(new FileStream(savingPath, FileMode.Create));
+
                 if (id > 0)
                 {
                     return RedirectToAction(nameof(CreateBook), new { isSuccess = true, newBookId = id });
                 }
             }
-
 
             IEnumerable<Language> languages = await _languageRepository.GetAll();
             ViewBag.Languages = languages.Select(x => new SelectListItem(x.Text, x.Id.ToString()));
