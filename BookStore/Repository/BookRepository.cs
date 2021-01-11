@@ -34,9 +34,9 @@ namespace BookStore.Repository
         }
 
         public async Task<Book> GetById(int id)
-        {
+        {            
             Book book = await _context.Books.FindAsync(id);
-          
+
             return book;
         }
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using BookStore.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace BookStore.Controllers
 {
@@ -56,6 +57,7 @@ namespace BookStore.Controllers
         public async Task<IActionResult> GetBook(int id)
         {
             Book book = await _bookRepository.GetById(id);
+
             BookViewModel result = new BookViewModel()
             {
                 Id = book.Id,
@@ -66,7 +68,8 @@ namespace BookStore.Controllers
                 LanguageId = book.LanguageId,
                 Title = book.Title,
                 TotalPages = book.TotalPages,
-                ImageUrl = book.ImageUrl
+                ImageUrl = book.ImageUrl,
+                GalleryFiles = book.BookGalery.ToList()
             };
 
             return View(result);
@@ -87,10 +90,20 @@ namespace BookStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                string imagePath = "images/" + Guid.NewGuid().ToString() + "_" + book.Photo.FileName;
-                string savingPath = Path.Combine(_environment.WebRootPath, imagePath);
-                imagePath = "/" + imagePath;
-                
+                string imagePath = await SaveImage(book.Photo, "bookImages/cover/");
+                book.ImageUrl = imagePath;
+
+                book.GalleryFiles = new List<Gallery>();
+                foreach (var image in book.Gallery)
+                {
+                    Gallery gallery = new Gallery()
+                    {
+                        Name = image.FileName,
+                        ImageUrl = await SaveImage(image, "bookImages/gallery/")
+                    };
+                    book.GalleryFiles.Add(gallery);
+                }
+
                 Book newBook = new Book()
                 {
                     Author = book.Author,
@@ -99,13 +112,13 @@ namespace BookStore.Controllers
                     LanguageId = book.LanguageId,
                     Title = book.Title,
                     TotalPages = book.TotalPages ?? 0,
-                    ImageUrl = imagePath,
+                    ImageUrl = book.ImageUrl,
+                    BookGalery = book.GalleryFiles,
                     CreatedOn = DateTime.UtcNow,
                     UpdatedOn = DateTime.UtcNow
                 };
 
                 int id = await _bookRepository.Add(newBook);
-                await book.Photo.CopyToAsync(new FileStream(savingPath, FileMode.Create));
 
                 if (id > 0)
                 {
@@ -119,11 +132,21 @@ namespace BookStore.Controllers
             ModelState.AddModelError("", "Incorrect input data");
 
             return View();
-        }
+        }     
 
         public List<Book> SearchBooks(string bookName, string authorName)
         {
             return _bookRepository.SearchBook(bookName, authorName);
-        }    
+        }
+
+        private async Task<string> SaveImage(IFormFile file, string imageFolderPath)
+        {
+            string imagePath = imageFolderPath + Guid.NewGuid().ToString() + "_" + file.FileName;
+            string savingPath = Path.Combine(_environment.WebRootPath, imagePath);
+            imagePath = "/" + imagePath;
+
+            await file.CopyToAsync(new FileStream(savingPath, FileMode.Create));
+            return imagePath;
+        }
     }
 }

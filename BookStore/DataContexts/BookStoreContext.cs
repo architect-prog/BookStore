@@ -11,6 +11,7 @@ namespace BookStore.DataContexts
     {
         public DbSet<Book> Books { get; set; }
         public DbSet<Language> Languages { get; set; }
+        public DbSet<Gallery> Galleries { get; set; }
 
         public BookStoreContext(DbContextOptions<BookStoreContext> options)
             : base(options)

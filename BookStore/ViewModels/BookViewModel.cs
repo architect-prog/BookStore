@@ -35,7 +35,9 @@ namespace BookStore.ViewModels
         [Display(Name = "Main photo")]
         [Required(ErrorMessage = "The main photo is required")]
         public IFormFile Photo { get; set; }
-
         public string ImageUrl { get; set; }
+
+        public IFormFileCollection Gallery { get; set; }
+        public List<Gallery> GalleryFiles { get; set; }
     }
 }

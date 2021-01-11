@@ -9,7 +9,7 @@ namespace BookStore.Models
     {
         public int Id { get; set; }
         public string Text { get; set; }
-        public ICollection<Book> Books { get; set; }
+        public virtual ICollection<Book> Books { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? UpdatedOn { get; set; }
     }
