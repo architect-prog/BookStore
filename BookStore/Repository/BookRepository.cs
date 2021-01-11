@@ -40,6 +40,14 @@ namespace BookStore.Repository
             return book;
         }
 
+        public async Task<IEnumerable<Book>> GetTopBooks(int count)
+        {
+            List<Book> books = await _context.Books.Take(count).ToListAsync();
+
+            return books;
+        }
+
+
         public List<Book> SearchBook(string title, string author)
         {
             //return DataSource().Where(x => title == x.Title && author == x.Author).ToList();

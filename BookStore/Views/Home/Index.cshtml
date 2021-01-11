@@ -22,16 +22,8 @@
 <div class="py-5 bg-light">
     <div class="container">
         <h3 class="h3">Top books</h3>
-        <div class="row">
-            <div class="col-md-4">
-                @await Html.PartialAsync("_BookThumbnail", new BookViewModel())
-            </div>
-            <div class="col-md-4">
-                @await Html.PartialAsync("_BookThumbnail", new BookViewModel())
-            </div>
-            <div class="col-md-4">
-                @await Html.PartialAsync("_BookThumbnail", new BookViewModel())
-            </div>            
-        </div>
+
+        <vc:top-books count="3">
+        </vc:top-books>        
     </div>
 </div>
