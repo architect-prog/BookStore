@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace BookStore.Controllers
 {
+    [Route("[controller]/[action]")]
     public class BookController : Controller
     {
         private readonly BookRepository _bookRepository;
@@ -53,7 +54,7 @@ namespace BookStore.Controllers
             return View(result);
         }
 
-        [Route("Book-Details")]
+        [Route("~/Book-Details/{id:int:min(1)}")]
         public async Task<IActionResult> GetBook(int id)
         {
             Book book = await _bookRepository.GetById(id);

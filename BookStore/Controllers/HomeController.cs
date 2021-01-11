@@ -14,11 +14,13 @@ namespace BookStore.Controllers
             return View();
         }
 
+        [Route("about-us")]
         public IActionResult AboutUs()
         {
             return View();
         }
 
+        [Route("contact-us")]
         public IActionResult ContactUs()
         {
             return View();
