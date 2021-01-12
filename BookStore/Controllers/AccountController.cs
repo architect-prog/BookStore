@@ -34,7 +34,7 @@ namespace BookStore.Controllers
                     Email = user.Email,
                     Firstname = user.FirstName,
                     Lastname = user.LastName,
-                    UserName = user.FirstName + " " + user.LastName
+                    UserName = user.Email
                 };
 
                 var result = await _accountReposirory.Add(identity, user.Password);
@@ -46,9 +46,50 @@ namespace BookStore.Controllers
                     }
                     return View(user);
                 }
+
+                ModelState.Clear();
             }
 
             return View();
+        }
+
+        public IActionResult SignIn()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SignInViewModel user, string returnUrl)
+        {
+            if (ModelState.IsValid)
+            {
+                User identity = new User()
+                {
+                    Email = user.Email,
+                    UserName = user.Email
+                };
+
+                var result = await _accountReposirory.PasswordSignInAsync(identity, user.Password, user.RememberMe);
+                if (result.Succeeded)
+                {
+                    if (!string.IsNullOrEmpty(returnUrl))
+                    {
+                        return LocalRedirect(returnUrl);
+                    }
+                }
+
+                ModelState.AddModelError("", "Invalid email or password");
+
+            }
+
+            return View();
+        }
+
+        public async Task<IActionResult> SignOut()
+        {
+            await _accountReposirory.SignOutAsync();
+
+            return RedirectToAction("Index", "Home");
         }
     }
 }

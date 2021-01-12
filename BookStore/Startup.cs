@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using BookStore.Models;
+using BookStore.Utils;
 
 namespace BookStore
 {
@@ -33,6 +34,22 @@ namespace BookStore
             services.AddDbContext<BookStoreContext>(options => options.UseLazyLoadingProxies().UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<BookStoreContext>();
+
+            services.Configure<IdentityOptions>(opt => 
+            {
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireDigit = false;
+                opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequiredLength = 4;                
+            });
+
+            services.Configure<Application>(_configuration.GetSection("Application"));
+
+            services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = _configuration.GetSection("Application").GetValue<string>("LoginPath");
+            });
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllersWithViews();

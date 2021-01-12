@@ -12,6 +12,7 @@ using System.IO;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using BookStore.ViewModels.BookViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookStore.Controllers
 {
@@ -58,6 +59,7 @@ namespace BookStore.Controllers
             return View(result);
         }
 
+        [Authorize]
         public IActionResult CreateBook(bool isSuccess = false, int newBookId = 0)
         {            
             ViewBag.IsSuccess = isSuccess;
@@ -66,6 +68,7 @@ namespace BookStore.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CreateBook(BookCreateViewModel book)
         {
             if (ModelState.IsValid)

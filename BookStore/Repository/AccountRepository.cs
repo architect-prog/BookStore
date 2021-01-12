@@ -10,10 +10,12 @@ namespace BookStore.Repository
     public class AccountRepository
     {
         private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public AccountRepository(UserManager<User> userManager)
+        public AccountRepository(UserManager<User> userManager, SignInManager<User> signInManager)
         {
             _userManager = userManager;
+            _signInManager = signInManager;
         }
         public async Task<IdentityResult> Add(User user, string password)
         {
@@ -21,6 +23,19 @@ namespace BookStore.Repository
                         
             return result;
         }
+
+        public async Task<SignInResult> PasswordSignInAsync(User user, string password, bool rememberUser)
+        {
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, password, rememberUser, false);
+
+            return result;
+        }
+
+        public async Task SignOutAsync()
+        {
+            await _signInManager.SignOutAsync();
+        }
+
 
         public Task<IEnumerable<IdentityUser>> GetAll()
         {
