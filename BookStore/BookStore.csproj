@@ -27,4 +27,6 @@
     <Folder Include="wwwroot\bookPreviews\" />
   </ItemGroup>
 
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
 </Project>

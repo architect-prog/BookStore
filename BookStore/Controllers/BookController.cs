@@ -78,10 +78,7 @@ namespace BookStore.Controllers
         }
 
         public async Task<IActionResult> CreateBook(bool isSuccess = false, int newBookId = 0)
-        {
-            IEnumerable<Language> languages = await _languageRepository.GetAll();
-            ViewBag.Languages = languages.Select(x => new SelectListItem(x.Text, x.Id.ToString()));
-            
+        {            
             ViewBag.IsSuccess = isSuccess;
             ViewBag.Id = newBookId;
             return View();
@@ -134,9 +131,6 @@ namespace BookStore.Controllers
                     return RedirectToAction(nameof(CreateBook), new { isSuccess = true, newBookId = id });
                 }
             }
-
-            IEnumerable<Language> languages = await _languageRepository.GetAll();
-            ViewBag.Languages = languages.Select(x => new SelectListItem(x.Text, x.Id.ToString()));
 
             ModelState.AddModelError("", "Incorrect input data");
 
