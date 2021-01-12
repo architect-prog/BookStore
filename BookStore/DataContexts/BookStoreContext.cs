@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace BookStore.DataContexts
 {
-    public class BookStoreContext : IdentityDbContext
+    public class BookStoreContext : IdentityDbContext<User>
     {
         public DbSet<Book> Books { get; set; }
         public DbSet<Language> Languages { get; set; }

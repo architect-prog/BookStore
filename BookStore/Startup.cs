@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using AutoMapper;
+using BookStore.Models;
 
 namespace BookStore
 {
@@ -31,7 +32,7 @@ namespace BookStore
         {
             services.AddDbContext<BookStoreContext>(options => options.UseLazyLoadingProxies().UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<BookStoreContext>();
+            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<BookStoreContext>();
 
             services.AddAutoMapper(typeof(Startup));
             services.AddControllersWithViews();
@@ -44,6 +45,7 @@ namespace BookStore
 #endif            
             services.AddScoped<BookRepository>();
             services.AddScoped<LanguageRepository>();
+            services.AddScoped<AccountRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
