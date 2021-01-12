@@ -1,7 +1,7 @@
-﻿@model BookViewModel
+﻿@model BookThumbnailViewModel
 
 <div class="card mb-4 shadow-sm">
-    <img class="bd-placeholder-img card-img-top" src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/noimage.jpg" : Model.Title)" />
+    <img class="bd-placeholder-img card-img-top" src="@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/noimage.jpg" : Model.ImageUrl)" />
     <div class="card-body">
         <h3 class="card-title">@(string.IsNullOrEmpty(Model.Title) ? "Book Title" : Model.Title)</h3>
         <p class="card-text">@(string.IsNullOrEmpty(Model.Description) ? "Book Description" : Model.Description)</p>

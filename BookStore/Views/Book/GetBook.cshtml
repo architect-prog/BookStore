@@ -1,4 +1,4 @@
-﻿@model BookViewModel
+﻿@model BookDetailsViewModel
 @{
     ViewData["Title"] = $"Book details {Model.Title}";
 }
@@ -9,16 +9,32 @@
         <div class="col-md-6">
             <div id="carousel" class="carousel slide" data-ride="carousel">
                 <ol class="carousel-indicators">
-                    @for (int i = 0; i < Model.GalleryFiles.Count; i++)
+                    @if (Model.GalleryFiles.Count > 0)
                     {
-                        <li data-target="#carousel" data-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
+                        @for (int i = 0; i < Model.GalleryFiles.Count; i++)
+                        {
+                            <li data-target="#carousel" data-slide-to="@i" class="@(i == 0 ? "active" : "")"></li>
+                        }
+                    }
+                    else
+                    {
+                            <li data-target="#carousel" data-slide-to="0" class="active"></li>
                     }
                 </ol>
                 <div class="carousel-inner">
-                    @for (int i = 0; i < Model.GalleryFiles.Count; i++)
+                    @if (Model.GalleryFiles.Count > 0)
                     {
-                        <div class="carousel-item @(i == 0 ? "active" : "")">
-                            <img src="@Model.GalleryFiles[i].ImageUrl" asp-append-version="true" class="d-block w-100 h-100" alt="@Model.GalleryFiles[i].Name">
+                        @for (int i = 0; i < Model.GalleryFiles.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@Model.GalleryFiles[i].ImageUrl" asp-append-version="true" class="d-block w-100 h-100" alt="@Model.GalleryFiles[i].Name">
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item active">
+                            <img src="~/images/noimage.jpg" asp-append-version="true" class="d-block w-100 h-100" alt="noimage">
                         </div>
                     }
                 </div>
@@ -65,7 +81,7 @@
             <ul class="list-group">
                 <li class="list-group-item"><span class="font-weight-bold">Category - </span>@Model.Category</li>
                 <li class="list-group-item"><span class="font-weight-bold">Total pages - </span>@Model.TotalPages</li>
-                <li class="list-group-item"><span class="font-weight-bold">Language - </span>@Model.Language</li>
+                <li class="list-group-item"><span class="font-weight-bold">Language - </span>@Model.Language.Text</li>
             </ul>
 
         </div>
@@ -74,24 +90,8 @@
     <div class="py-5 bg-light">
         <h3 class="h3">Similar books</h3>
         <div class="row">
-            @for (int i = 0; i < 5; i++)
-            {
-                <div class="col-md-4">
-                    <div class="card mb-4 shadow-sm">
-                        <svg class="card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"></rect><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
-                        <div class="card-body">
-                            <h3 class="card-title">book.Title</h3>
-                            <p class="card-text">book.Description</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="btn-group">
-                                    <a href="#" class="btn btn-sm btn-outline-secondary">View details</a>
-                                </div>
-                                <small class="text-muted">book.Author</small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
+            <vc:top-books count="6">
+            </vc:top-books>
         </div>
     </div>
 </div>

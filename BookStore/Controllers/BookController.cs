@@ -10,6 +10,8 @@ using BookStore.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using BookStore.ViewModels.BookViewModels;
 
 namespace BookStore.Controllers
 {
@@ -19,35 +21,27 @@ namespace BookStore.Controllers
         private readonly BookRepository _bookRepository;
         private readonly LanguageRepository _languageRepository;
         private readonly IWebHostEnvironment _environment;
-        public BookController(BookRepository bookRepository, 
-            LanguageRepository languageRepository, IWebHostEnvironment env)
+        private readonly IMapper _mapper;
+
+        public BookController(BookRepository bookRepository, LanguageRepository languageRepository, 
+            IWebHostEnvironment env, IMapper mapper)
         {
             _bookRepository = bookRepository;
             _languageRepository = languageRepository;
             _environment = env;
+            _mapper = mapper;
         }
 
         public async Task<IActionResult> GetAllBooks()
         {
             var books = await _bookRepository.GetAll();
 
-            List<BookViewModel> result = new List<BookViewModel>();
+            List<BookThumbnailViewModel> result = new List<BookThumbnailViewModel>();
             if (books?.Any() != null)
             {
                 foreach (var book in books)
                 {
-                    result.Add(new BookViewModel()
-                    {
-                        Id = book.Id,
-                        Author = book.Author,
-                        Category = book.Category,
-                        Description = book.Description,
-                        Language = book.Language,
-                        LanguageId = book.LanguageId,
-                        Title = book.Title,
-                        TotalPages = book.TotalPages,
-                        ImageUrl = book.ImageUrl
-                    });
+                    result.Add(_mapper.Map<BookThumbnailViewModel>(book));
                 }
             }
 
@@ -59,25 +53,12 @@ namespace BookStore.Controllers
         {
             Book book = await _bookRepository.GetById(id);
 
-            BookViewModel result = new BookViewModel()
-            {
-                Id = book.Id,
-                Author = book.Author,
-                Category = book.Category,
-                Description = book.Description,
-                Language = book.Language,
-                LanguageId = book.LanguageId,
-                Title = book.Title,
-                TotalPages = book.TotalPages,
-                ImageUrl = book.ImageUrl,
-                PreviewUrl = book.PreviewUrl,
-                GalleryFiles = book.BookGalery.ToList()
-            };
+            BookDetailsViewModel result = _mapper.Map<BookDetailsViewModel>(book);           
 
             return View(result);
         }
 
-        public async Task<IActionResult> CreateBook(bool isSuccess = false, int newBookId = 0)
+        public IActionResult CreateBook(bool isSuccess = false, int newBookId = 0)
         {            
             ViewBag.IsSuccess = isSuccess;
             ViewBag.Id = newBookId;
@@ -85,14 +66,14 @@ namespace BookStore.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook(BookViewModel book)
+        public async Task<IActionResult> CreateBook(BookCreateViewModel book)
         {
             if (ModelState.IsValid)
             {
-                string imagePath = await SaveImage(book.Photo, "bookImages/cover/");
+                string imagePath = await SaveImage(book.Image, "bookImages/cover/");
                 book.ImageUrl = imagePath;
 
-                book.GalleryFiles = new List<Gallery>();
+                book.BookGalery = new List<Gallery>();
                 if (book.Gallery != null)
                 {
                     foreach (var image in book.Gallery)
@@ -102,27 +83,15 @@ namespace BookStore.Controllers
                             Name = image.FileName,
                             ImageUrl = await SaveImage(image, "bookImages/gallery/")
                         };
-                        book.GalleryFiles.Add(gallery);
+
+                        book.BookGalery.Add(gallery);
                     }
                 }              
 
                 string previewPath = await SaveImage(book.Preview, "bookPreviews/");
                 book.PreviewUrl = previewPath;
 
-                Book newBook = new Book()
-                {
-                    Author = book.Author,
-                    Category = book.Category,
-                    Description = book.Description,
-                    LanguageId = book.LanguageId,
-                    Title = book.Title,
-                    TotalPages = book.TotalPages ?? 0,
-                    ImageUrl = book.ImageUrl,
-                    BookGalery = book.GalleryFiles,
-                    PreviewUrl = book.PreviewUrl,
-                    CreatedOn = DateTime.UtcNow,
-                    UpdatedOn = DateTime.UtcNow
-                };
+                Book newBook = _mapper.Map<Book>(book);
 
                 int id = await _bookRepository.Add(newBook);
 
