@@ -34,7 +34,8 @@ namespace BookStore
         {
             services.AddDbContext<BookStoreContext>(options => options.UseLazyLoadingProxies().UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<BookStoreContext>();
+            services.AddIdentity<User, IdentityRole>().
+                AddEntityFrameworkStores<BookStoreContext>().AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(opt => 
             {
@@ -42,7 +43,9 @@ namespace BookStore
                 opt.Password.RequireDigit = false;
                 opt.Password.RequireNonAlphanumeric = false;
                 opt.Password.RequireLowercase = false;
-                opt.Password.RequiredLength = 4;                
+                opt.Password.RequiredLength = 4;
+
+                opt.SignIn.RequireConfirmedEmail = true;
             });
 
             services.Configure<Application>(_configuration.GetSection("Application"));

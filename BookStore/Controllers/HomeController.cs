@@ -24,15 +24,8 @@ namespace BookStore.Controllers
             _emailService = emailService;
         }
 
-        public async Task<IActionResult> Index()
-        {
-            UserEmailOptions options = new UserEmailOptions()
-            {
-                ToEmails = new List<string>() { "test@gmail.com"}
-            };
-
-            await _emailService.SendTestEmail(options);
-
+        public IActionResult Index()
+        {      
             return View();
         }
 

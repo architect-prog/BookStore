@@ -8,5 +8,7 @@ namespace BookStore.Utils
     public class Application
     {
         public string LoginPath { get; set; }
+        public string AppDomain { get; set; }
+        public string EmailConfirmation { get; set; }
     }
 }

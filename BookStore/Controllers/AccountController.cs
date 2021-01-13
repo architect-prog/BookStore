@@ -44,10 +44,12 @@ namespace BookStore.Controllers
                     {
                         ModelState.AddModelError("", error.Description);                       
                     }
+
                     return View(user);
                 }
 
                 ModelState.Clear();
+                return RedirectToAction(nameof(ConfirmEmail), new { email = identity.Email });
             }
 
             return View();
@@ -73,9 +75,14 @@ namespace BookStore.Controllers
                         return LocalRedirect(returnUrl);
                     }
                 }
-
-                ModelState.AddModelError("", "Invalid email or password");
-
+                else if(result.IsNotAllowed)
+                {
+                    ModelState.AddModelError("", "Not allowed login");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Invalid email or password");
+                }
             }
 
             return View();
@@ -119,6 +126,51 @@ namespace BookStore.Controllers
             }
             
             return View(passwordChange);
+        }
+
+        public async Task<IActionResult> ConfirmEmail(string id, string token, string email)
+        {
+            EmailConfirmViewModel model = new EmailConfirmViewModel()
+            {
+                Email = email                
+            };
+
+            if (!string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(token))
+            {
+                token = token.Replace(' ', '+');
+
+                var result = await _accountReposirory.ConfirmEmail(id, token);
+                if (result.Succeeded)
+                {
+                    model.EmailVerified = true;
+                }
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(EmailConfirmViewModel emailConfirm)
+        {
+            var user = await _accountReposirory.GetUserByEmail(emailConfirm.Email);
+            if (user != null)
+            {
+                if (user.EmailConfirmed)
+                {
+                    emailConfirm.IsConfirmed = true;
+                    return View(emailConfirm);
+                }
+
+                await _accountReposirory.GenerateEmailConfirmation(user);
+                emailConfirm.EmailSent = true;
+                ModelState.Clear();
+            }
+            else
+            {
+                ModelState.AddModelError("", "Something wrong");
+            }
+
+            return View(emailConfirm);
         }
     }
 }
