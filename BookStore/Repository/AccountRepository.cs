@@ -36,6 +36,13 @@ namespace BookStore.Repository
             await _signInManager.SignOutAsync();
         }
 
+        public async Task<IdentityResult> ChangePassword(User user, string currentPassword, string newPassword)
+        {
+            var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+
+            return result;
+        }
+
 
         public Task<IEnumerable<IdentityUser>> GetAll()
         {

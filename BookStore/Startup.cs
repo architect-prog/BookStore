@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using AutoMapper;
 using BookStore.Models;
 using BookStore.Utils;
+using BookStore.Services;
 
 namespace BookStore
 {
@@ -65,6 +66,8 @@ namespace BookStore
             services.AddScoped<AccountRepository>();
 
             services.AddScoped<IUserClaimsPrincipalFactory<User>, ClaimsPrincipalFactory>();
+
+            services.AddTransient<UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

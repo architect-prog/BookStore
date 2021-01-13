@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookStore.Models;
 using BookStore.Repository;
+using BookStore.Services;
 using BookStore.ViewModels.UserViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,13 @@ namespace BookStore.Controllers
     {
         private readonly AccountRepository _accountReposirory;
         private readonly IMapper _mapper;
+        private readonly UserService _userService;
 
-        public AccountController(AccountRepository userReposirory, IMapper mapper)
+        public AccountController(AccountRepository userReposirory, IMapper mapper, UserService userService)
         {
             _accountReposirory = userReposirory;
             _mapper = mapper;
+            _userService = userService;
         }
 
         public IActionResult SignUp()
@@ -83,6 +86,39 @@ namespace BookStore.Controllers
             await _accountReposirory.SignOutAsync();
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel passwordChange)
+        {
+            if (ModelState.IsValid)
+            {
+                if (_userService.IsAthenticated())
+                {
+                    User user = await _userService.GetCurrentUser();
+                    var result = await _accountReposirory.ChangePassword(user, passwordChange.CurrentPassword, passwordChange.NewPassword);
+
+                    if (result.Succeeded)
+                    {
+                        ViewBag.Success = true;
+                        
+                        ModelState.Clear();
+                        return View();
+                    }
+                    
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }                    
+                }
+            }
+            
+            return View(passwordChange);
         }
     }
 }
