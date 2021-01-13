@@ -1,4 +1,5 @@
-﻿using BookStore.Models;
+﻿using AutoMapper;
+using BookStore.Models;
 using BookStore.Repository;
 using BookStore.ViewModels.UserViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -13,10 +14,12 @@ namespace BookStore.Controllers
     public class AccountController : Controller
     {
         private readonly AccountRepository _accountReposirory;
+        private readonly IMapper _mapper;
 
-        public AccountController(AccountRepository userReposirory)
+        public AccountController(AccountRepository userReposirory, IMapper mapper)
         {
             _accountReposirory = userReposirory;
+            _mapper = mapper;
         }
 
         public IActionResult SignUp()
@@ -29,13 +32,7 @@ namespace BookStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                User identity = new User()
-                {
-                    Email = user.Email,
-                    Firstname = user.FirstName,
-                    Lastname = user.LastName,
-                    UserName = user.Email
-                };
+                User identity = _mapper.Map<User>(user);
 
                 var result = await _accountReposirory.Add(identity, user.Password);
                 if (!result.Succeeded)
@@ -63,11 +60,7 @@ namespace BookStore.Controllers
         {
             if (ModelState.IsValid)
             {
-                User identity = new User()
-                {
-                    Email = user.Email,
-                    UserName = user.Email
-                };
+                User identity = _mapper.Map<User>(user); 
 
                 var result = await _accountReposirory.PasswordSignInAsync(identity, user.Password, user.RememberMe);
                 if (result.Succeeded)

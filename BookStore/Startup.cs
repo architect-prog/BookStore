@@ -63,6 +63,8 @@ namespace BookStore
             services.AddScoped<BookRepository>();
             services.AddScoped<LanguageRepository>();
             services.AddScoped<AccountRepository>();
+
+            services.AddScoped<IUserClaimsPrincipalFactory<User>, ClaimsPrincipalFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
