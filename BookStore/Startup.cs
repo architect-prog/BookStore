@@ -46,6 +46,7 @@ namespace BookStore
             });
 
             services.Configure<Application>(_configuration.GetSection("Application"));
+            services.Configure<SmtpConfiguration>(_configuration.GetSection("SmtpConfig"));
 
             services.ConfigureApplicationCookie(config =>
             {
@@ -64,6 +65,7 @@ namespace BookStore
             services.AddScoped<BookRepository>();
             services.AddScoped<LanguageRepository>();
             services.AddScoped<AccountRepository>();
+            services.AddScoped<EmailService>();
 
             services.AddScoped<IUserClaimsPrincipalFactory<User>, ClaimsPrincipalFactory>();
 

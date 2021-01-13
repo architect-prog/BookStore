@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BookStore.Models;
 using Microsoft.Extensions.Configuration;
 using BookStore.Services;
+using BookStore.Utils;
 
 namespace BookStore.Controllers
 {
@@ -13,16 +14,24 @@ namespace BookStore.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly UserService _userService;
+        private readonly EmailService _emailService;
 
-        public HomeController(IConfiguration configuration, UserService userService)
+        public HomeController(IConfiguration configuration, UserService userService, 
+            EmailService emailService)
         {
             _configuration = configuration;
             _userService = userService;
+            _emailService = emailService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            string userId = _userService.GetUserId();
+            UserEmailOptions options = new UserEmailOptions()
+            {
+                ToEmails = new List<string>() { "test@gmail.com"}
+            };
+
+            await _emailService.SendTestEmail(options);
 
             return View();
         }
