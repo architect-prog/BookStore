@@ -51,6 +51,11 @@ namespace BookStore
                 opt.Lockout.DefaultLockoutTimeSpan = new TimeSpan(TimeSpan.TicksPerHour);
             });
 
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+            {
+                opt.TokenLifespan = TimeSpan.FromMinutes(5);
+            });
+
             services.Configure<Application>(_configuration.GetSection("Application"));
             services.Configure<SmtpConfiguration>(_configuration.GetSection("SmtpConfig"));
 
