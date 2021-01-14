@@ -56,6 +56,13 @@ namespace BookStore.Repository
             return user;
         }
 
+        public async Task<User> GetUserById(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            return user;
+        }
+
         public async Task<IdentityResult> ChangePassword(User user, string currentPassword, string newPassword)
         {
             var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
@@ -76,8 +83,25 @@ namespace BookStore.Repository
 
             if (!string.IsNullOrEmpty(token))
             {
-                await SendConfirmationEmail(user, token);
+                await SendPasswordResetEmail(user, token);
             }
+        }
+
+        public async Task GeneratePasswordResetConfirmation(User user)
+        {
+            string token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                await SendPasswordResetEmail(user, token);
+            }
+        }
+
+        public async Task<IdentityResult> ResetPassword(User user, string token, string newPassword)
+        {
+            var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+            return result;
         }
 
         private async Task SendConfirmationEmail(User user, string token)
@@ -93,6 +117,21 @@ namespace BookStore.Repository
             };
 
             await _emailService.SendEmailConfirmation(options);
+        }
+
+        private async Task SendPasswordResetEmail(User user, string token)
+        {
+            UserEmailOptions options = new UserEmailOptions()
+            {
+                ToEmails = new List<string>() { user.Email },
+                Placeholders = new List<KeyValuePair<string, string>>()
+                {
+                    new KeyValuePair<string, string>("{{Username}}", user.Firstname),
+                    new KeyValuePair<string, string>("{{Link}}", string.Format(_application.AppDomain + _application.ForgotPassword, user.Id, token))
+                }
+            };
+
+            await _emailService.SendPasswodResetEmail(options);
         }
     }
 }

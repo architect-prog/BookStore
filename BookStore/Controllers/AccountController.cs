@@ -3,6 +3,7 @@ using BookStore.Models;
 using BookStore.Repository;
 using BookStore.Services;
 using BookStore.ViewModels.UserViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -172,5 +173,71 @@ namespace BookStore.Controllers
 
             return View(emailConfirm);
         }
+
+        [AllowAnonymous]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _accountReposirory.GetUserByEmail(model.Email);
+                if (user != null)
+                {
+                    await _accountReposirory.GeneratePasswordResetConfirmation(user);
+
+                }
+
+                ModelState.Clear();
+                model.EmailSent = true;
+            }
+
+            return View(model);
+        }
+
+
+        [AllowAnonymous]
+        public IActionResult ResetPassword(string id, string token)
+        {
+            ResetPasswordViewModel model = new ResetPasswordViewModel
+            {
+                UserId = id,
+                Token = token
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                model.Token = model.Token.Replace(' ', '+');
+                var result = await _accountReposirory.ResetPassword(await _accountReposirory.GetUserById(model.UserId), model.Token, model.NewPassword);
+
+                if (result.Succeeded)
+                {
+                    ModelState.Clear();
+                    model.IsSuccess = true;
+
+                    return View(model);
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(" ", error.Description);
+                }
+            }
+
+            return View(model);
+        }
+
     }
 }

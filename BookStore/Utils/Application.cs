@@ -10,5 +10,6 @@ namespace BookStore.Utils
         public string LoginPath { get; set; }
         public string AppDomain { get; set; }
         public string EmailConfirmation { get; set; }
+        public string ForgotPassword { get; set; }
     }
 }
