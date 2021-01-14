@@ -46,6 +46,9 @@ namespace BookStore
                 opt.Password.RequiredLength = 4;
 
                 opt.SignIn.RequireConfirmedEmail = true;
+
+                opt.Lockout.MaxFailedAccessAttempts = 8;
+                opt.Lockout.DefaultLockoutTimeSpan = new TimeSpan(TimeSpan.TicksPerHour);
             });
 
             services.Configure<Application>(_configuration.GetSection("Application"));

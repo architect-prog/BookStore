@@ -7,6 +7,7 @@ using BookStore.Models;
 using Microsoft.Extensions.Configuration;
 using BookStore.Services;
 using BookStore.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BookStore.Controllers
 {
@@ -36,6 +37,7 @@ namespace BookStore.Controllers
         }
 
         [Route("contact-us")]
+        [Authorize]
         public IActionResult ContactUs()
         {
             return View();

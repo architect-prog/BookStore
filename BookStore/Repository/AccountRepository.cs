@@ -14,15 +14,18 @@ namespace BookStore.Repository
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly EmailService _emailService;
         private readonly Application _application;
 
         public AccountRepository(UserManager<User> userManager, SignInManager<User> signInManager, 
-            EmailService emailService, IOptions<Application> applicationOptions)
+            EmailService emailService, IOptions<Application> applicationOptions,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailService = emailService;
+            _roleManager = roleManager;
             _application = applicationOptions.Value;
         }
         public async Task<IdentityResult> Add(User user, string password)
@@ -39,7 +42,7 @@ namespace BookStore.Repository
 
         public async Task<SignInResult> PasswordSignInAsync(User user, string password, bool rememberUser)
         {
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, password, rememberUser, false);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName, password, rememberUser, true);
 
             return result;
         }
