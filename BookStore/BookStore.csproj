@@ -24,6 +24,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
     <Folder Include="wwwroot\bookImages\cover\" />
     <Folder Include="wwwroot\bookImages\gallery\" />
     <Folder Include="wwwroot\bookPreviews\" />
